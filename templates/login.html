@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Login</title>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <h1>Login</h1>
+        <form>
+            <div> Email
+                <label>
+                    <input type="text">
+                </label>
+            </div>
+            <div>
+                <label> Password
+                    <input type="text">
+                </label>
+            </div>
+            <div>
+                <button type="submit">Login</button>
+            </div>
+        </form>
+        <div>
+            <span>Don't have an account?</span>
+            <a href="{{url_for('create_account')}}"> Create One Here! </a>
+        </div>
+    </body>
+</html>
