@@ -6,11 +6,25 @@
 </head>
 <body>
     <h1>Welcome to Yoga</h1>
-    <a>
-        <button>View Appointments</button>
-    </a>
-    <a href="{{url_for('render_form')}}">
-        <button>Create New</button>
-    </a>
+    <div>
+        <a>
+            <button>View Appointments</button>
+        </a>
+    </div>
+    <div>
+        <a href="{{url_for('render_form')}}">
+            <button>Create New</button>
+        </a>
+    </div>
+    <div>
+        <a href="{{url_for('login')}}">
+            <button>Login</button>
+        </a>
+    </div>
+    <div>
+        <a href="{{url_for('create_account')}}">
+            <button>Create Account</button>
+        </a>
+    </div>
 </body>
 </html>

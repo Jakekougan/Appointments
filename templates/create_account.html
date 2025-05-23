@@ -6,35 +6,35 @@
     </head>
     <body>
         <h1>Create Account</h1>
-        <form>
+        <form action="{{url_for('add_user')}}" method="post">
             <div>
                 <label> First Name
-                    <input type="text">
+                    <input type="text" name="rfname" value="{{fname}}">
                 </label>
             </div>
             <div>
                 <label> Last Name
-                    <input type="text">
+                    <input type="text" name="rlname" value="{{lname}}">
                 </label>
             </div>
             <div> Email
                 <label>
-                    <input type="text">
+                    <input type="text" name="remail" value="{{email}}">
                 </label>
             </div>
             <div>
                 <label> Phone Number
-                    <input type="text">
+                    <input type="text" name="rpnum" value="{{pnum}}">
                 </label>
             </div>
             <div>
                 <label> Password
-                    <input type="text">
+                    <input type="text" name="rpwd">
                 </label>
             </div>
             <div>
                 <label> Confirm Password
-                    <input type="text">
+                    <input type="text" name="rcpwd">
                 </label>
             </div>
             <div>

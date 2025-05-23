@@ -6,15 +6,15 @@
     </head>
     <body>
         <h1>Login</h1>
-        <form>
+        <form action="{{url_for('user_auth')}}" method="post">
             <div> Email
                 <label>
-                    <input type="text">
+                    <input type="text" name="lemail">
                 </label>
             </div>
             <div>
                 <label> Password
-                    <input type="text">
+                    <input type="text" name="lpwd">
                 </label>
             </div>
             <div>
