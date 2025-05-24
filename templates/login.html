@@ -6,6 +6,17 @@
     </head>
     <body>
         <h1>Login</h1>
+        <div>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
         <form action="{{url_for('user_auth')}}" method="post">
             <div> Email
                 <label>
@@ -14,7 +25,7 @@
             </div>
             <div>
                 <label> Password
-                    <input type="text" name="lpwd">
+                    <input type="password" name="lpwd">
                 </label>
             </div>
             <div>

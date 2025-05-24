@@ -6,35 +6,26 @@
 </head>
 <body>
     <h1>Schedule Appointment</h1>
-    <form>
-        <div>
-            <label> First Name
-                <input type="text">
-            </label>
-        </div>
-        <div>
-            <label> Last Name
-                <input type="text">
-            </label>
-        </div>
-        <div>
-            <label> Phone Number
-                <input type="text">
-            </label>
-        </div>
-        <div>
-            <label> Email
-                <input type="text">
-            </label>
-        </div>
+    <div>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+    <form action="{{url_for('add_appt')}}" method="post">
         <div>
             <label> Date
-                <input type="date">
+                <input type="date" name="date">
             </label>
         </div>
         <div>
             <label> Time
-                <input type="time">
+                <input type="time" name="time">
             </label>
         </div>
         <div>

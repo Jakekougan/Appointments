@@ -18,24 +18,24 @@
         {% endwith %}
     </div>
     <div>
-        <a href="{{url_for('view')}}">
-            <button>View Appointments</button>
-        </a>
+        <ul>
+            {%for d in user_data%}
+                <li>{{d}}</li>
+            {% endfor %}
+        </ul>
+
     </div>
     <div>
-        <a href="{{url_for('render_form')}}">
-            <button>Create New</button>
-        </a>
+        <label>Appointments</label>
+        <ol>
+            {% for a in appts %}
+                <li>{{a}}</li>
+            {% endfor %}
+
+        </ol>
+
+
     </div>
-    <div>
-        <a href="{{url_for('login')}}">
-            <button>Login</button>
-        </a>
-    </div>
-    <div>
-        <a href="{{url_for('create_account')}}">
-            <button>Create Account</button>
-        </a>
-    </div>
+
 </body>
 </html>

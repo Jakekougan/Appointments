@@ -6,6 +6,17 @@
     </head>
     <body>
         <h1>Create Account</h1>
+        <div>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
         <form action="{{url_for('add_user')}}" method="post">
             <div>
                 <label> First Name
@@ -29,12 +40,12 @@
             </div>
             <div>
                 <label> Password
-                    <input type="text" name="rpwd">
+                    <input type="password" name="rpwd">
                 </label>
             </div>
             <div>
                 <label> Confirm Password
-                    <input type="text" name="rcpwd">
+                    <input type="password" name="rcpwd">
                 </label>
             </div>
             <div>
