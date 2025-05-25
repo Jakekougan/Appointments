@@ -18,9 +18,10 @@
         {% endwith %}
     </div>
     <div>
+        <h2>Active Users:</h2>
         <ul>
             {%for d in user_data%}
-                <li>{{d}}</li>
+                <li>{{d[1]}} {{d[2]}}</li>
             {% endfor %}
         </ul>
 
@@ -35,6 +36,11 @@
         </ol>
 
 
+    </div>
+    <div>
+        <a href="{{url_for('render_form')}}">
+            <button>Create New</button>
+        </a>
     </div>
 
 </body>

@@ -40,7 +40,7 @@ def close_db(error):
 
 @app.route("/", methods=["GET"])
 def main():
-    return render_template("index.html")
+    return render_template("login.html")
 
 @app.route("/create_apt", methods=["GET"])
 def render_form():
@@ -51,7 +51,7 @@ def login():
     return render_template("login.html")
 @app.route("/view", methods=["GET"])
 def view():
-    return render_template('view.html', user_data=get_user_info('all'), appts=get_appts())
+    return render_template('view.html', user_data=get_user_info('all')[2:], appts=get_appts())
 
 @app.route("/create_acc", methods=["GET"])
 def create_account():
@@ -95,7 +95,7 @@ def user_auth():
         pwd = request.form.get("lpwd")
         if check_password_hash(pwd_hash ,pwd):
             session['user_data'] = get_user_info(email)
-            return render_template("index.html")
+            return render_template("view.html", user_data=get_user_info('all'), appts=get_appts()[2:])
         else:
             flash("Your username or password in incorrect!")
             return redirect(url_for('login'))
@@ -107,14 +107,14 @@ def add_appt():
     print(user)
     date = request.form.get("date")
     time = request.form.get("time")
-    query = db.execute("SELECT date, start_time from appointments WHERE user = ? AND start_time = ? AND date = ?", [user, time, date])
+    query = db.execute("SELECT date, start_time from appointments WHERE user_id = ? AND start_time = ? AND date = ?", [user, time, date])
     datum = query.fetchall()
     if datum:
         flash("You already have an appointment scheduled for this time")
         return redirect(url_for('render_form'))
     else:
-        insertion = db.execute("INSERT into appointments (user_id, date, start_time) VALUES (?, ?, ?)", [user[0], date, time])
-        #db.commit()
+        db.execute("INSERT into appointments (user_id, date, start_time) VALUES (?, ?, ?)", [user, date, time])
+        db.commit()
         flash("Appointment Confirmed")
         return render_template('view.html')
 
@@ -130,14 +130,24 @@ def get_user_info(uname):
     else:
         query = db.execute("SELECT * FROM users WHERE email = ?", [uname])
         udata = query.fetchone()
-        return udata[0]
+        try:
+            return udata[0]
+
+        except IndexError:
+           print(1)
+           return "No data Found"
 
 
 def get_appts():
     db = get_db()
     query = db.execute("SELECT DISTINCT * FROM appointments")
     adata = query.fetchall()
-    return adata[0]
+    try:
+        return adata[0]
+
+    except IndexError:
+        return "No data Found"
+
 
 
 
