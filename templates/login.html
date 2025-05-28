@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title>Login</title>
-        <meta charset="UTF-8">
-    </head>
-    <body>
-        <h1>Login</h1>
+{% extends "layout.html" %}
+{%block  body%}
+        <h1 class="title">Login</h1>
         <div>
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
@@ -20,21 +15,20 @@
         <form action="{{url_for('user_auth')}}" method="post">
             <div> Email
                 <label>
-                    <input type="text" name="lemail">
+                    <input class="input" type="text" name="lemail">
                 </label>
             </div>
             <div>
                 <label> Password
-                    <input type="password" name="lpwd">
+                    <input class="input" type="password" name="lpwd">
                 </label>
             </div>
             <div>
-                <button type="submit">Login</button>
+                <button class="button is-success is-rounded" type="submit">Login</button>
             </div>
         </form>
         <div>
             <span>Don't have an account?</span>
             <a href="{{url_for('create_account')}}"> Create One Here! </a>
         </div>
-    </body>
-</html>
+{% endblock %}

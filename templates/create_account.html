@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title>Create Account</title>
-        <meta charset="UTF-8">
-    </head>
-    <body>
-        <h1>Create Account</h1>
+{% extends "layout.html" %}
+{%block  body%}
+        <h1 class="title">Create Account</h1>
         <div>
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
@@ -18,39 +13,38 @@
             {% endwith %}
         </div>
         <form action="{{url_for('add_user')}}" method="post">
-            <div>
-                <label> First Name
-                    <input type="text" name="rfname" value="{{fname}}">
+            <div class="field">
+                <label class="subtitle"> First Name
+                    <input class="input" type="text" name="rfname" value="{{fname}}">
                 </label>
             </div>
-            <div>
-                <label> Last Name
-                    <input type="text" name="rlname" value="{{lname}}">
+            <div class="field">
+                <label class="subtitle"> Last Name
+                    <input class="input" type="text" name="rlname" value="{{lname}}">
                 </label>
             </div>
-            <div> Email
-                <label>
-                    <input type="text" name="remail" value="{{email}}">
+            <div class="field">
+                <label class="subtitle"> Email
+                    <input class="input" type="text" name="remail" value="{{email}}">
                 </label>
             </div>
-            <div>
-                <label> Phone Number
-                    <input type="text" name="rpnum" value="{{pnum}}">
+            <div class="field">
+                <label class="subtitle"> Phone Number
+                    <input class="input" type="text" name="rpnum" value="{{pnum}}">
                 </label>
             </div>
-            <div>
-                <label> Password
-                    <input type="password" name="rpwd">
+            <div class="field">
+                <label class="subtitle"> Password
+                    <input class="input" type="password" name="rpwd">
                 </label>
             </div>
-            <div>
-                <label> Confirm Password
-                    <input type="password" name="rcpwd">
+            <div class="field">
+                <label class="subtitle"> Confirm Password
+                    <input class="input" type="password" name="rcpwd">
                 </label>
             </div>
-            <div>
-                <button type="submit">Create Account</button>
+            <div class="field">
+                <button class="button is-success is-rounded" type="submit">Create Account</button>
             </div>
         </form>
-    </body>
-</html>
+{% endblock %}

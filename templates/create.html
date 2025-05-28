@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Tranquil Soul</title>
-    <meta charset="UTF-8">
-</head>
-<body>
-    <h1>Schedule Appointment</h1>
-    <div>
+{% extends "layout.html" %}
+{%block  body%}
+    <h1 class="title">Schedule Appointment</h1>
+    <div class="text is-centered">
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 <ul>
@@ -17,26 +12,32 @@
             {% endif %}
         {% endwith %}
     </div>
-    <form action="{{url_for('add_appt')}}" method="post">
-        <div>
-            <label> Date
-                <input type="date" name="date">
-            </label>
-        </div>
-        <div>
-            <label> Time
-                <input type="time" name="time">
-            </label>
-        </div>
-        <div>
-            <label> Recieve Text and Email reminders?
-                <input type="radio"> Yes
-            <input type="radio"> No
-        </label>
-        </div>
-        <div>
-            <button type="submit">Submit</button>
-        </div>
-    </form>
-</body>
-</html>
+    <div class="control">
+        <form action="{{url_for('add_appt')}}" method="post">
+                <label class="subtitle"> Date
+                    <input class="input" type="date" name="date">
+                </label>
+            </div>
+            <div class="field">
+                <label class="subtitle"> Time
+                    <input class="input" type="time" name="time">
+                </label>
+            </div>
+            <div class="field">
+                <label class="subtitle"> Recieve Text and Email reminders?</label>
+            </div>
+            <div class="field">
+                <input class="radio" name="option" type="radio"> Yes
+                <input class="radio" name="option" type="radio"> No
+            </div>
+            <div>
+                <button class="button is-success is-rounded" type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+    <div>
+        <a href="{{url_for('view')}}">
+            <button class="button is-primary is-rounded mt-4">Go back</button>
+        </a>
+    </div>
+{% endblock%}

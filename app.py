@@ -51,7 +51,7 @@ def login():
     return render_template("login.html")
 @app.route("/view", methods=["GET"])
 def view():
-    return render_template('view.html', user_data=get_user_info('all')[2:], appts=get_appts())
+    return render_template('view.html', user_data=get_user_info('all'), appts=get_appts()[2:])
 
 @app.route("/create_acc", methods=["GET"])
 def create_account():
@@ -116,7 +116,7 @@ def add_appt():
         db.execute("INSERT into appointments (user_id, date, start_time) VALUES (?, ?, ?)", [user, date, time])
         db.commit()
         flash("Appointment Confirmed")
-        return render_template('view.html')
+        return render_template('view.html', user_data=get_user_info('all'), appts=get_appts()[2:])
 
 
 
@@ -140,10 +140,10 @@ def get_user_info(uname):
 
 def get_appts():
     db = get_db()
-    query = db.execute("SELECT DISTINCT * FROM appointments")
+    query = db.execute("SELECT DISTINCT first_name, last_name, date, start_time, end_time FROM appointments JOIN users ON users.id = appointments.user_id")
     adata = query.fetchall()
     try:
-        return adata[0]
+        return adata
 
     except IndexError:
         return "No data Found"
