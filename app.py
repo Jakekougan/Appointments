@@ -119,6 +119,33 @@ def add_appt():
         return render_template('view.html', user_data=get_user_info('all'), appts=get_appts()[2:])
 
 
+@app.route("/delete", methods=["POST"])
+def delete():
+    pass
+
+@app.route("/edit_form", methods=["POST"])
+def edit_form():
+    pass
+
+@app.route("/edit", methods=["POST"])
+def edit():
+    db = get_db()
+    check = request.form.get("check")
+    appt = request.form.get("appt_num")
+    if check == "1":
+        db.execute("DELETE FROM appointments WHERE appointments.id = ? ", (appt))
+        db.commit()
+        flash("Appointment Successfully Canceled")
+        return redirect(url_for("view"))
+    else:
+        data = sel_appts(appt)
+        return render_template("edit.html", appt_data=data)
+
+
+
+
+
+
 
 
 def get_user_info(uname):
@@ -140,13 +167,25 @@ def get_user_info(uname):
 
 def get_appts():
     db = get_db()
-    query = db.execute("SELECT DISTINCT first_name, last_name, date, start_time, end_time FROM appointments JOIN users ON users.id = appointments.user_id")
+    query = db.execute("SELECT DISTINCT appointments.id, first_name, last_name, date, start_time, end_time FROM appointments JOIN users ON users.id = appointments.user_id")
     adata = query.fetchall()
     try:
         return adata
 
     except IndexError:
         return "No data Found"
+
+def sel_appts(appt):
+    db = get_db()
+    query= db.execute("SELECT * FROM appointments WHERE appointments.id = ?", (appt))
+    adata = query.fetchone()
+    return adata
+
+def check_deadline():
+    pass
+
+def to_UTC():
+    pass
 
 
 

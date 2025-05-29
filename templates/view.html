@@ -70,7 +70,7 @@
                     <th>User</th>
                     <th>Date</th>
                     <th>Start Time</th>
-                    <th>End Time</th>
+                    <th>Options</th>
                 </tr>
             </thead>
             <tbody>
@@ -79,7 +79,17 @@
                     <td>{{appt.first_name}} {{appt.last_name}}</td>
                     <td>{{ appt.date }}</td>
                     <td>{{ appt.start_time }}</td>
-                    <td>{{ appt.end_time }}</td>
+                    <td>
+                        <form action="{{url_for('edit')}}" method="post">
+                            <a>
+                                <button type="submit" class="button is-primary mr-3" value="0" name="check">Edit</button>
+                            </a>
+                            <a>
+                                <button type="submit" class="button is-danger" value="1" name="check">Cancel</button>
+                            </a>
+                            <input type="hidden" value="{{appt.id}}" name="appt_num">
+                        </form>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>

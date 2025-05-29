@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{%block  body%}
+    <h1 class="title is-centered">Reschedule Appointment</h1>
+    <div class="text is-centered">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+    <div class="control">
+        <form action="{{url_for('edit')}}" method="post">
+                <label class="subtitle"> Date
+                    <input class="input" value="{{appt_data.date}}" type="date" name="date">
+                </label>
+            </div>
+            <div class="field">
+                <label class="subtitle"> Time
+                    <input class="input" value="{{appt_data.start_time}}" type="time" name="time">
+                </label>
+            </div>
+            <div>
+                <button class="button is-success is-rounded" type="submit">Save Changes</button>
+            </div>
+        </form>
+    </div>
+    <div>
+        <a href="{{url_for('view')}}">
+            <button class="button is-primary is-rounded mt-4">Go back</button>
+        </a>
+    </div>
+{% endblock%}
