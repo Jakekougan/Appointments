@@ -123,20 +123,55 @@ def add_appt():
 def delete():
     pass
 
-@app.route("/edit_form", methods=["POST"])
-def edit_form():
-    pass
+@app.route("/confirm_edit", methods=["POST"])
+def confirm_edit():
+    db = get_db()
+    check = session['check']
+    appt = request.form.get("appt")
+    print(f"Received appt: {appt}")
+    confirm = request.form.get("confirm")
+    print(confirm)
+
+    if check == "1" and confirm == "yes":
+        db.execute("DELETE FROM appointments WHERE id = ?", (appt,))
+        db.commit()
+        flash("Changes confirmed!")
+        return redirect(url_for('view'))
+    elif check == "0" and confirm == "yes":
+        date = request.form.get("date")
+        time = request.form.get("time")
+        db.execute("UPDATE appointments SET date = ?, start_time = ? WHERE id = ?", (date, time ,appt))
+        db.commit()
+        flash("Changes confirmed!")
+        return redirect(url_for('view'))
+    else:
+        flash("Changes aborted!")
+        return redirect(url_for('view'))
+
+@app.route("/edit_data", methods=["POST"])
+def edit_data():
+    oldTime = request.form.get("oldTime")
+    oldDate = request.form.get("oldDate")
+
+    new_time = request.form.get("time")
+    new_date = request.form.get("date")
+    appt_id = request.form.get("appt")
+
+    return render_template("confirm.html", newTime=new_time, newDate=new_date, id=appt_id, oldTime=oldTime, oldDate=oldDate)
+
+
 
 @app.route("/edit", methods=["POST"])
 def edit():
     db = get_db()
     check = request.form.get("check")
+    session['check'] = check
     appt = request.form.get("appt_num")
+
     if check == "1":
-        db.execute("DELETE FROM appointments WHERE appointments.id = ? ", (appt))
-        db.commit()
-        flash("Appointment Successfully Canceled")
-        return redirect(url_for("view"))
+        query = db.execute("SELECT id, date, start_time FROM appointments WHERE id = ?", (appt,))
+        query = query.fetchone()
+        return render_template("confirm.html", appt_datum = query, check=check)
     else:
         data = sel_appts(appt)
         return render_template("edit.html", appt_data=data)

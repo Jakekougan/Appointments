@@ -13,7 +13,7 @@
         {% endwith %}
     </div>
     <div class="control">
-        <form action="{{url_for('edit')}}" method="post">
+        <form action="{{url_for('edit_data')}}" method="post">
                 <label class="subtitle"> Date
                     <input class="input" value="{{appt_data.date}}" type="date" name="date">
                 </label>
@@ -23,8 +23,10 @@
                     <input class="input" value="{{appt_data.start_time}}" type="time" name="time">
                 </label>
             </div>
+            <input type="hidden" value="{{appt_data.start_time}}" name="oldTime">
+            <input type="hidden" value="{{appt_data.date}}" name="oldDate">
             <div>
-                <button class="button is-success is-rounded" type="submit">Save Changes</button>
+                <button class="button is-success is-rounded" type="submit" value="{{appt_data.id}}" name="appt">Save Changes</button>
             </div>
         </form>
     </div>

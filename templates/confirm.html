@@ -1,0 +1,48 @@
+{% extends "layout.html"%}
+{%block body%}
+
+    <form action="{{url_for('confirm_edit')}}" method="post">
+
+        {%if check == "1"%}
+            <article class="message">
+                <div class="message-header">
+                    <p>Cancel this Appointment?</p>
+                </div>
+                <div class="message-body">
+                    Are you sure you want to cancel the following appointment?:
+                    <div>
+                        <span>From</span>
+
+                        {{appt_datum.date}} at {{appt_datum.start_time}}
+                    </div>
+
+                </div>
+                <div>
+                    <input type="hidden" name="appt" value="{{appt_datum.id}}">
+                    <button type="submit" class="button is-success is-rounded" name="confirm" value="yes">Yes</button>
+                    <button type="submit" class="button is-danger is-rounded" name="confirm" value="no">No</button>
+                </div>
+            </article>
+
+        {% else %}
+            <article class="message">
+                <div class="message-header">
+                    <p>Confirm Changes?</p>
+                </div>
+                <div class="message-body">
+                    Are you sure you want to commit these changes to the following appointment?:
+                    <div><span>From</span></div>
+                    <div><span>{{oldDate}} to {{oldTime}}</span></div>
+                    <div><span>to</span></div>
+                    <div><span>{{newDate}} at {{newTime}}</span></div>
+                </div>
+                <div>
+                    <input type="hidden" name="appt" value="{{id}}">
+                    <button type="submit" class="button is-success is-rounded" name="confirm" value="yes">Yes</button>
+                    <button type="submit" class="button is-danger is-rounded" name="confirm" value="no">No</button>
+                </div>
+            </article>
+        {% endif %}
+    </form>
+
+{% endblock %}
