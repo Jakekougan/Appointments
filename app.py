@@ -51,7 +51,8 @@ def login():
     return render_template("login.html")
 @app.route("/view", methods=["GET"])
 def view():
-    return render_template('view.html', user_data=get_user_info('all'), appts=get_appts()[2:])
+    appts=get_appts()
+    return render_template('view.html', user_data=get_user_info('all'), appts=appts, num=len(appts))
 
 @app.route("/create_acc", methods=["GET"])
 def create_account():
@@ -212,7 +213,7 @@ def get_appts():
 
 def sel_appts(appt):
     db = get_db()
-    query= db.execute("SELECT * FROM appointments WHERE appointments.id = ?", (appt))
+    query= db.execute("SELECT * FROM appointments WHERE appointments.id = ?", (appt,))
     adata = query.fetchone()
     return adata
 
