@@ -49,10 +49,11 @@ def render_form():
 @app.route("/login", methods=["GET"])
 def login():
     return render_template("login.html")
+
 @app.route("/view", methods=["GET"])
 def view():
     appts=get_appts()
-    return render_template('view.html', user_data=get_user_info('all'), appts=appts, num=len(appts))
+    return render_template('view.html', user_data=get_user_info('all'), appts=appts, ids=get_appt_ids())
 
 @app.route("/create_acc", methods=["GET"])
 def create_account():
@@ -107,7 +108,7 @@ def add_appt():
     user = session["user_data"]
     print(user)
     date = request.form.get("date")
-    time = request.form.get("time")
+    time = to12hr(request.form.get("time"))
     query = db.execute("SELECT date, start_time from appointments WHERE user_id = ? AND start_time = ? AND date = ?", [user, time, date])
     datum = query.fetchall()
     if datum:
@@ -179,11 +180,6 @@ def edit():
 
 
 
-
-
-
-
-
 def get_user_info(uname):
     db = get_db()
     if uname.lower() == 'all':
@@ -201,6 +197,7 @@ def get_user_info(uname):
            return "No data Found"
 
 
+
 def get_appts():
     db = get_db()
     query = db.execute("SELECT DISTINCT appointments.id, first_name, last_name, date, start_time, end_time FROM appointments JOIN users ON users.id = appointments.user_id")
@@ -216,6 +213,39 @@ def sel_appts(appt):
     query= db.execute("SELECT * FROM appointments WHERE appointments.id = ?", (appt,))
     adata = query.fetchone()
     return adata
+
+def get_appt_ids():
+    db = get_db()
+    query = db.execute("SELECT id FROM appointments")
+    ids = query.fetchall()
+    return ids
+
+def to12hr(time):
+    spring = time.split(':')
+    hour = int(spring[0])
+    min = spring[1]
+    period = ""
+    if hour > 12:
+        hour -= 12
+        period = "PM"
+
+    elif hour[0] == "0":
+        hour = hour[1]
+
+    elif hour == 12:
+        period = "PM"
+
+    elif hour == 0:
+        hour = 12
+        period = "AM"
+
+    else:
+        period = "AM"
+
+    newTime = str(hour) + ":" + min + " " + period
+    print(newTime)
+    return newTime
+
 
 def check_deadline():
     pass
