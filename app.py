@@ -250,9 +250,6 @@ def to12hr(time):
 def check_deadline():
     pass
 
-def to_UTC():
-    pass
-
 
 
 
