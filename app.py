@@ -176,7 +176,8 @@ def edit():
         return render_template("confirm.html", appt_datum = query, check=check)
     else:
         data = sel_appts(appt)
-        return render_template("edit.html", appt_data=data)
+        time = to24hr(data[3])
+        return render_template("edit.html", appt_data=data, time=time)
 
 
 
@@ -246,9 +247,27 @@ def to12hr(time):
     print(newTime)
     return newTime
 
+def to24hr(time):
+    t, period = time.split()[0], time.split()[1]
+    hour = int(t[0])
+    min = t[2:]
+    if period == "PM":
+        hour += 12
 
-def check_deadline():
-    pass
+    elif hour < 10:
+        hour = "0" + str(hour)
+
+    newTime = str(hour) + ":" + min
+    return newTime
+
+
+def modify_data(data, function):
+    modded = []
+    for d in data[0]:
+        new = function(d)
+        modded.append(new)
+    return modded
+
 
 
 
