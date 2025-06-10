@@ -40,6 +40,7 @@ def close_db(error):
 
 @app.route("/", methods=["GET"])
 def main():
+    print("begin")
     return render_template("login.html")
 
 @app.route("/create_apt", methods=["GET"])
@@ -53,6 +54,7 @@ def login():
 @app.route("/view", methods=["GET"])
 def view():
     appts=get_appts()
+    print(appts)
     return render_template('view.html', user_data=get_user_info('all'), appts=appts, ids=get_appt_ids())
 
 @app.route("/create_acc", methods=["GET"])
@@ -120,19 +122,12 @@ def add_appt():
         flash("Appointment Confirmed")
         return render_template('view.html', user_data=get_user_info('all'), appts=get_appts()[2:])
 
-
-@app.route("/delete", methods=["POST"])
-def delete():
-    pass
-
 @app.route("/confirm_edit", methods=["POST"])
 def confirm_edit():
     db = get_db()
     check = session['check']
     appt = request.form.get("appt")
-    print(f"Received appt: {appt}")
     confirm = request.form.get("confirm")
-    print(confirm)
 
     if check == "1" and confirm == "yes":
         db.execute("DELETE FROM appointments WHERE id = ?", (appt,))
@@ -140,8 +135,9 @@ def confirm_edit():
         flash("Changes confirmed!")
         return redirect(url_for('view'))
     elif check == "0" and confirm == "yes":
+        print("no")
         date = request.form.get("date")
-        time = request.form.get("time")
+        time = to12hr(request.form.get("time"))
         db.execute("UPDATE appointments SET date = ?, start_time = ? WHERE id = ?", (date, time ,appt))
         db.commit()
         flash("Changes confirmed!")
@@ -229,9 +225,6 @@ def to12hr(time):
     if hour > 12:
         hour -= 12
         period = "PM"
-
-    elif hour[0] == "0":
-        hour = hour[1]
 
     elif hour == 12:
         period = "PM"
