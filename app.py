@@ -40,7 +40,6 @@ def close_db(error):
 
 @app.route("/", methods=["GET"])
 def main():
-    print("begin")
     return render_template("login.html")
 
 @app.route("/create_apt", methods=["GET"])
@@ -53,9 +52,7 @@ def login():
 
 @app.route("/view", methods=["GET"])
 def view():
-    appts=get_appts()
-    print(appts)
-    return render_template('view.html', user_data=get_user_info('all'), appts=appts, ids=get_appt_ids())
+    return render_template('view.html', user_data=get_user_info('all'), appts=get_appts(), ids=get_appt_ids())
 
 @app.route("/create_acc", methods=["GET"])
 def create_account():
@@ -99,7 +96,7 @@ def user_auth():
         pwd = request.form.get("lpwd")
         if check_password_hash(pwd_hash ,pwd):
             session['user_data'] = get_user_info(email)
-            return render_template("view.html", user_data=get_user_info('all'), appts=get_appts()[2:])
+            return redirect(url_for('view'))
         else:
             flash("Your username or password in incorrect!")
             return redirect(url_for('login'))
@@ -120,7 +117,7 @@ def add_appt():
         db.execute("INSERT into appointments (user_id, date, start_time) VALUES (?, ?, ?)", [user, date, time])
         db.commit()
         flash("Appointment Confirmed")
-        return render_template('view.html', user_data=get_user_info('all'), appts=get_appts()[2:])
+        return redirect(url_for('view'))
 
 @app.route("/confirm_edit", methods=["POST"])
 def confirm_edit():
