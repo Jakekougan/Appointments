@@ -3,6 +3,16 @@ from flask import Flask, request, g, redirect, url_for, render_template, flash, 
 from sqlite3 import dbapi2 as sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+from dotenv import load_dotenv
+
+#load enviornment variables from .env file
+
+
+load_dotenv()
+print(os.getenv("ADMIN_PWD"))
+
+
+
 
 
 app = Flask(__name__)
@@ -19,7 +29,6 @@ def init_db():
     db = get_db()
     with app.open_resource('schema.sql', mode='r') as f:
         sql_script = f.read()
-        print(sql_script)
         db.cursor().executescript(sql_script)
     db.commit()
 
@@ -40,6 +49,8 @@ def close_db(error):
 
 @app.route("/", methods=["GET"])
 def main():
+    init_db()
+    add_admins()
     return render_template("login.html")
 
 @app.route("/create_apt", methods=["GET"])
@@ -234,7 +245,6 @@ def to12hr(time):
         period = "AM"
 
     newTime = str(hour) + ":" + min + " " + period
-    print(newTime)
     return newTime
 
 def to24hr(time):
@@ -257,6 +267,18 @@ def modify_data(data, function):
         new = function(d)
         modded.append(new)
     return modded
+
+def add_admins():
+    db = get_db()
+    db.execute('INSERT INTO users (first_name, last_name, email, phone_number, password, type)' \
+    'VALUES ("Jake", "Kougan", "jakekougan6@gmail.com", "312-718-1065", ?, "1");', [generate_password_hash(os.getenv("ADMIN_PWD"), salt_length=11)])
+    db.commit()
+    print("Admin Accounts Ready for use!")
+    query = db.execute("SELECT * FROM users;")
+    data = query.fetchone()
+    for i in data:
+        print(i)
+
 
 
 
