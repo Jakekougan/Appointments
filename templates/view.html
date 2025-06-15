@@ -52,15 +52,17 @@
             {% endif %}
         {% endwith %}
     </div>
-    <div class="box">
-        <h2 class="subtitle is-centered">Active Users:</h2>
-        <ul>
-            {%for d in user_data%}
-                <li class="text is-centered">{{d[1]}} {{d[2]}}</li>
-            {% endfor %}
-        </ul>
-
-    </div>
+    {% if 1 in session %}
+        <div class="box">
+            <h2 class="subtitle is-centered">Active Users:</h2>
+            <ul>
+                {%for d in user_data%}
+                    <li class="text is-centered">{{d[1]}} {{d[2]}}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+    {% endif %}
 
     {% if appts %}
         <div>
