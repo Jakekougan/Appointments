@@ -424,10 +424,18 @@ def add_admins():
     'VALUES ("Jake", "Kougan", "jakekougan6@gmail.com", "312-718-1065", ?, "1");', [generate_password_hash(os.getenv("ADMIN_PWD"), salt_length=11)])
     db.commit()
     print("Admin Accounts Ready for use!")
-    query = db.execute("SELECT * FROM users;")
-    data = query.fetchone()
-    for i in data:
-        print(i)
+
+@app.cli.command('add_admins')
+def add_admins_cmd():
+    '''Allows the admin accounts to be added from the command line
+    Enter python -m flask add_admins
+
+    Parameters:
+        None
+
+    Returns:
+        None'''
+    add_admins()
 
 
 
