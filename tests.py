@@ -80,3 +80,34 @@ class Tests(TestCase):
         rv = self.app.get('/view', follow_redirects=True)
         assert b'2023-10-01' in rv.data
         assert b'10:00 PM' in rv.data
+
+    def test_delete_appointment(self):
+        self.test_add_appointment()
+        rv = self.app.post('/confirm_edit', data=dict(
+            date='2023-10-01',
+            time='10:00 PM',
+            check='1'
+        ), follow_redirects=True)
+        assert b'Appointment Deleted' in rv.data
+
+    def test_edit_appointment(self):
+        self.test_add_appointment()
+        rv = self.app.post('/confirm_edit', data=dict(
+            date='2023-10-02',
+            time='11:00 PM',
+            check='0'
+        ), follow_redirects=True)
+        assert b'Appointment Updated' in rv.data
+        assert b'2023-10-02' in rv.data
+        assert b'11:00 PM' in rv.data
+
+    def abort_edit(self):
+        self.test_add_appointment()
+        rv = self.app.post('/confirm_edit', data=dict(
+            date='2023-10-01',
+            time='10:00 PM',
+            check='2'
+        ), follow_redirects=True)
+        assert b'Appointment Edit Aborted' in rv.data
+        assert b'2023-10-01' not in rv.data
+        assert b'10:00 PM' not in rv.data
