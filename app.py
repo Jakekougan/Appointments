@@ -121,10 +121,20 @@ def add_user():
     pwd = request.form.get("rpwd")
     cpwd = request.form.get("rcpwd")
 
+
+    if not check_email(email)[0]:
+        flash("Please enter a valid email address!")
+        return render_template("create_account.html", fname=fname, lname=lname, email=email)
+
+
     if pwd != cpwd:
         flash("Passwords do not match!")
         return render_template("create_account.html", fname=fname, lname=lname, email=email, pnum=pnum)
     else:
+        check, errmessage = check_pwd(pwd)
+        if not check:
+            flash(errmessage)
+            return render_template("create_account.html", fname=fname, lname=lname, email=email, pnum=pnum)
         pwd = generate_password_hash(pwd, salt_length=11)
         db.execute("INSERT INTO users (first_name, last_name, email, phone_number, password, type) VALUES (?,?,?,?,?,?)",
                 [fname, lname, email, pnum, pwd, 0])
@@ -382,20 +392,26 @@ def check_pwd(pwd):
         bool: True if the password meets the requirements, False otherwise'''
 
     check = None
+    err_message= ''
     if len(pwd) < 8:
         check = False
+        err_message = "Password must be at least 8 characters long."
     elif not any(char.isupper() for char in pwd):
         check = False
+        err_message = "Password must contain at least one uppercase letter."
     elif not any(char.islower() for char in pwd):
         check = False
+        err_message = "Password must contain at least one lowercase letter."
     elif not any(char.isdigit() for char in pwd):
         check = False
+        err_message = "Password must contain at least one digit."
     elif not any(char in "!@#$%^&*()-_=+[]{}|;:,.<>?/" for char in pwd):
         check = False
+        err_message = "Password must contain at least one special character."
     else:
         check = True
 
-    return check
+    return check , err_message
 
 def check_email(email):
     '''Checks if the email entered by the user is in a valid format
