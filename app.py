@@ -136,10 +136,8 @@ def add_user():
 def user_auth():
     '''Handles the logic of ensuring the data entered in the login form matches a user in the database'''
     #Get data from login form
-    db = get_db()
     email = request.form.get("lemail")
-    stmt = db.execute("SELECT password, type FROM users WHERE email = ?", [email])
-    pwd_row = stmt.fetchone()
+    pwd_row = get_user_info(email)
 
     if not pwd_row:
         flash("Your username or password is incorrect!")
@@ -151,11 +149,13 @@ def user_auth():
         utype = pwd_row["type"]
 
         session["utype"] = utype
+        session['user_data'] = get_user_info(email)
 
 
         pwd = request.form.get("lpwd")
         if check_password_hash(pwd_hash ,pwd):
             session['user_data'] = get_user_info(email)
+            flash(f"Login Successful! Welcome {session['user_data'][1]} {session['user_data'][2]}")
             return redirect(url_for('view'))
         else:
             flash("Your username or password is incorrect!")
@@ -370,8 +370,49 @@ def to24hr(time):
     newTime = str(hour) + ":" + min
     return newTime
 
+def check_pwd(pwd):
+    '''Checks if the password entered by the user meets
+    the requirements of being at least 8 characters long, contains
+    at least one uppercase letter, one lowercase letter, one digit, and one special character.
+
+    Parameters:
+        pwd (str): the password entered by the user
+
+    Returns:
+        bool: True if the password meets the requirements, False otherwise'''
+
+    check = None
+    if len(pwd) < 8:
+        check = False
+    elif not any(char.isupper() for char in pwd):
+        check = False
+    elif not any(char.islower() for char in pwd):
+        check = False
+    elif not any(char.isdigit() for char in pwd):
+        check = False
+    elif not any(char in "!@#$%^&*()-_=+[]{}|;:,.<>?/" for char in pwd):
+        check = False
+    else:
+        check = True
+
+    return check
+
+def check_email(email):
+    '''Checks if the email entered by the user is in a valid format
+
+    Parameters:
+        email (str): the email address entered by the user
+
+    Returns:
+        bool: True if the email is in a valid format, False otherwise'''
+
+    if "@" in email and "." in email and len(email) > 5:
+        return True
+    else:
+        return False
+
 def add_admins():
-    '''Hard code admins account into the database when the app is first launched, only needs to be called once
+    '''Hard code admins account into the database when the app is first launched, only needs to be called once after init_db is called
 
     Parameters:
         None
