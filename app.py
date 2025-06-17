@@ -148,6 +148,7 @@ def user_auth():
     #Get data from login form
     email = request.form.get("lemail")
     pwd_row = get_user_info(email)
+    print(pwd_row)
 
     if not pwd_row:
         flash("Your username or password is incorrect!")
@@ -165,7 +166,7 @@ def user_auth():
         pwd = request.form.get("lpwd")
         if check_password_hash(pwd_hash ,pwd):
             session['user_data'] = get_user_info(email)
-            flash(f"Login Successful! Welcome {session['user_data'][1]} {session['user_data'][2]}")
+            flash(f"Login Successful! Welcome {session['user_data']['first_name']} {session['user_data']['last_name']}")
             return redirect(url_for('view'))
         else:
             flash("Your username or password is incorrect!")
@@ -274,12 +275,12 @@ def get_user_info(uname):
     else:
         query = db.execute("SELECT * FROM users WHERE email = ?", [uname])
         udata = query.fetchone()
-        try:
-            return udata[0]
+        if udata:
+            return dict(udata)
+        else:
+            return None
 
-        except IndexError:
-           print(1)
-           return "No data Found"
+
 
 
 
@@ -437,7 +438,7 @@ def add_admins():
         None '''
     db = get_db()
     db.execute('INSERT INTO users (first_name, last_name, email, phone_number, password, type)' \
-    'VALUES ("Jake", "Kougan", "jakekougan6@gmail.com", "312-718-1065", ?, "1");', [generate_password_hash(os.getenv("ADMIN_PWD"), salt_length=11)])
+    'VALUES ("ADMIN", "GUY", "?", "123-456-7890", ?, "1");', [os.getenv("ADDMIN_EMAIL"), generate_password_hash(os.getenv("ADMIN_PWD"), salt_length=11)])
     db.commit()
     print("Admin Accounts Ready for use!")
 
