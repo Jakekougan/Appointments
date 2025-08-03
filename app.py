@@ -457,15 +457,7 @@ def add_admins_cmd():
         None'''
     add_admins()
 
-def hello():
-    '''A simple hello world function to test if the app is running
 
-    Parameters:
-        None
-
-    Returns:
-        str: "Hello World"'''
-    return "Hello World"
 
 
 
