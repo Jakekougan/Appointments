@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 #load enviornment variables from .env file
 load_dotenv()
 
+#create Flask app
 app = Flask(__name__)
 
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'userinfo.db'),
