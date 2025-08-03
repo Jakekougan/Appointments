@@ -465,7 +465,6 @@ def hello():
 
     Returns:
         str: "Hello World"'''
-    num = 1 + 1
     return "Hello World"
 
 
