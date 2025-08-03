@@ -8,6 +8,9 @@ class Tests(unittest.TestCase):
         self.assertTrue(True)
 
     def setUp(self):
+        '''Creates Temporary runtime for application.
+        This is used to test the application without needing to run it in a server.
+        Called at the beginning of each unit test.'''
         app.app.config['SECRET_KEY'] = "TEMP"
         self.db_fd, app.app.config['DATABASE'] = tempfile.mkstemp()
         app.app.testing = True
@@ -19,6 +22,8 @@ class Tests(unittest.TestCase):
 
 
     def tearDown(self):
+        '''Closes the temporary database file and removes it.
+        Called at the end of each unit test.'''
         os.close(self.db_fd)
         os.unlink(app.app.config['DATABASE'])
 
