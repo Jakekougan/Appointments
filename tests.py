@@ -69,6 +69,41 @@ class Tests(unittest.TestCase):
         assert b'Your username or password is incorrect!' in rv.data
         assert b'Login Successful! Welcome test user' not in rv.data
 
+    def test_account_creation_failure_badEmail(self):
+        rv = self.app.post('/add_user', data=dict(
+            rfname='test',
+            rlname='user',
+            rpnum='123-456-7890',
+            remail='testuser.com',  # Missing '@'
+            rpwd='Testpassword12!',
+            rcpwd='Testpassword12!'
+        ), follow_redirects=True)
+        assert b'Please enter a valid email address!' in rv.data
+
+    def test_account_creation_failure_passwords_mismatch(self):
+        rv = self.app.post('/add_user', data=dict(
+            rfname='test',
+            rlname='user',
+            rpnum='123-456-7890',
+            remail='test@user.com',
+            rpwd='Testpassword12!',
+            rcpwd='Testpasswd12111!'
+        ), follow_redirects=True)
+        assert b'Passwords do not match!' in rv.data
+
+    def test_account_creation_for_existing_email(self):
+        self.testRegister()
+        rv = self.app.post('/add_user', data=dict(
+            rfname='test',
+            rlname='user',
+            rpnum='123-456-7890',
+            remail='test@user.com',
+            rpwd='Testpassword12!',
+            rcpwd='Testpassword12!'
+        ), follow_redirects=True)
+        assert b'Email already exists!' in rv.data
+        assert b'Account created!' not in rv.data
+
     def test_logout(self):
         self.test_login_success()
         rv = self.app.get('/', follow_redirects=True)
@@ -85,6 +120,14 @@ class Tests(unittest.TestCase):
             time='10:00 PM'
         ), follow_redirects=True)
         assert b'Appointment Confirmed' in rv.data
+
+    def test_add_appointment_already_exists(self):
+        self.test_add_appointment()
+        rv = self.app.post('/add_appt', data=dict(
+            date='2023-10-01',
+            time='10:00 PM'
+        ), follow_redirects=True)
+        assert b'You already have an appointment scheduled for this time' in rv.data
 
     def test_view_appointments(self):
         self.test_add_appointment()
@@ -133,16 +176,33 @@ class Tests(unittest.TestCase):
         assert b'2023-10-02' in rv.data
         assert b'11:00 PM' in rv.data
 
-    def abort_edit(self):
+    def test_abort_edit(self):
         self.test_add_appointment()
-        rv = self.app.post('/confirm_edit', data=dict(
-            date='2023-10-01',
-            time='10:00 PM',
-            check='2'
+        with app.app.app_context():
+            db = app.get_db()
+            appt = db.execute('SELECT id FROM appointments').fetchone()[0]
+        rv = self.app.post('/edit', data=dict(
+            check='0',
+            appt_num=appt
         ), follow_redirects=True)
-        assert b'Appointment Edit Aborted' in rv.data
-        assert b'2023-10-01' not in rv.data
-        assert b'10:00 PM' not in rv.data
+        rv = self.app.post('/edit_data', data=dict(
+            appt=appt,
+            oldTime='10:00 PM',
+            oldDate='2023-10-01',
+            time='11:00 PM',
+            date='2023-10-02'
+        ), follow_redirects=True)
+        rv = self.app.post('/confirm_edit', data=dict(
+            confirm='no',
+            appt=appt,
+            time='11:00 PM',
+            date='2023-10-02'
+        ), follow_redirects=True)
+        assert b'Changes aborted!' in rv.data
+        assert b'2023-10-01' in rv.data
+        assert b'10:00 PM' in rv.data
+        assert b'2023-10-02' not in rv.data
+        assert b'11:00 PM' not in rv.data
 
 
 if __name__ == '__main__':

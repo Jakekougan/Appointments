@@ -126,6 +126,10 @@ def add_user():
         flash("Please enter a valid email address!")
         return render_template("create_account.html", fname=fname, lname=lname, email=email)
 
+    elif db.execute("SELECT * FROM users WHERE email = ?", [email]).fetchone():
+        flash("Email already exists!")
+        return render_template("create_account.html", fname=fname, lname=lname, email=email, pnum=pnum)
+
 
     if pwd != cpwd:
         flash("Passwords do not match!")
