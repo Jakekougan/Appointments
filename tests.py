@@ -20,7 +20,6 @@ class Tests(unittest.TestCase):
 
             db = app.get_db()
 
-
     def tearDown(self):
         '''Closes the temporary database file and removes it.
         Called at the end of each unit test.'''
@@ -28,6 +27,7 @@ class Tests(unittest.TestCase):
         os.unlink(app.app.config['DATABASE'])
 
     def test_main_page(self):
+        '''test the main page loads correctly'''
         rv = self.app.get('/')
         assert b'Login' in rv.data
 
