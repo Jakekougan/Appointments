@@ -122,7 +122,7 @@ def add_user():
     cpwd = request.form.get("rcpwd")
 
 
-    if not check_email(email)[0]:
+    if not check_email(email):
         flash("Please enter a valid email address!")
         return render_template("create_account.html", fname=fname, lname=lname, email=email)
 
@@ -148,7 +148,6 @@ def user_auth():
     #Get data from login form
     email = request.form.get("lemail")
     pwd_row = get_user_info(email)
-    print(pwd_row)
 
     if not pwd_row:
         flash("Your username or password is incorrect!")
@@ -178,6 +177,7 @@ def add_appt():
     '''Handles logic for creating a new appointment '''
     db = get_db()
     user = session["user_data"]
+    user = user['id']
     date = request.form.get("date")
     time = to12hr(request.form.get("time"))
     query = db.execute("SELECT date, start_time from appointments WHERE user_id = ? AND start_time = ? AND date = ?", [user, time, date])
@@ -209,9 +209,8 @@ def confirm_edit():
         flash("Changes confirmed!")
         return redirect(url_for('view'))
     elif check == "0" and confirm == "yes":
-        print("no")
         date = request.form.get("date")
-        time = to12hr(request.form.get("time"))
+        time = request.form.get("time")
         db.execute("UPDATE appointments SET date = ?, start_time = ? WHERE id = ?", (date, time ,appt))
         db.commit()
         flash("Changes confirmed!")
@@ -228,7 +227,7 @@ def edit_data():
     oldTime = request.form.get("oldTime")
     oldDate = request.form.get("oldDate")
 
-    new_time = request.form.get("time")
+    new_time = to12hr(request.form.get("time"))
     new_date = request.form.get("date")
     appt_id = request.form.get("appt")
 

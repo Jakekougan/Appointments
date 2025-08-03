@@ -61,10 +61,7 @@
                 {% endfor %}
             </ul>
         </div>
-    {% else %}
-    {% endif %}
-
-    {% if appts %}
+        {% if appts %}
         <div>
 
             <table class="table">
@@ -99,8 +96,49 @@
                 </tbody>
             </table>
         </div>
+        {% else %}
+            <div class="box">
+                <h2 class="subtitle is-centered">No Appointments Found</h2>
+            </div>
+        {% endif %}
     {% else %}
-    {% endif%}
+        {% if appts %}
+            <div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Date</th>
+                            <th>Start Time</th>
+                            <th>Options</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for appt in appts  %}
+                        <tr>
+                            <td hidden="true" id="id">{{appt.id}}</td>
+                            <td>{{appt.first_name}} {{appt.last_name}}</td>
+                            <td>{{ appt.date }}</td>
+                            <td id="{{appt.id}}appt">{{ appt.start_time }}</td>
+                            <td>
+                                <form action="{{url_for('edit')}}" method="post">
+                                    <a>
+                                        <button type="submit" class="button is-primary mr-3" value="0" name="check">Edit</button>
+                                    </a>
+                                    <a>
+                                        <button type="submit" class="button is-danger" value="1" name="check">Cancel</button>
+                                    </a>
+                                    <input type="hidden" value="{{appt.id}}" name="appt_num">
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+        {% endif %}
+    {% endif %}
     <div>
         <a href="{{url_for('render_form')}}">
             <button class="button is-primary is-rounded mt-6">Create New</button>

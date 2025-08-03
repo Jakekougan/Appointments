@@ -1,10 +1,9 @@
-from unittest import TestCase
+import unittest
 import tempfile
 import os
-
 import app
 
-class Tests(TestCase):
+class Tests(unittest.TestCase):
     def test_always_passes(self):
         self.assertTrue(True)
 
@@ -23,48 +22,60 @@ class Tests(TestCase):
         os.close(self.db_fd)
         os.unlink(app.app.config['DATABASE'])
 
+    def test_main_page(self):
+        rv = self.app.get('/')
+        assert b'Login' in rv.data
+
     def testRegister(self):
         rv = self.app.post('/add_user', data=dict(
-            fname='test',
-            lname='user',
-            pnum='123-456-7890',
-            email='test@user.com',
-            pwd='testpassword',
-            cpwd='testpassword'
+        rfname='test',
+        rlname='user',
+        rpnum='123-456-7890',
+        remail='test@user.com',
+        rpwd='Testpassword12!',
+        rcpwd='Testpassword12!'
         ), follow_redirects=True)
-        assert b'Account Created!' in rv.data
+        assert b'Password must contain at least one uppercase letter.' not in rv.data
+        assert b'Password must contain at least one lowercase letter.' not in rv.data
+        assert b'Password must contain at least one digit.' not in rv.data
+        assert b'Password must contain at least one special character.' not in rv.data
+        assert b'Password must be at least 8 characters long.' not in rv.data
+        assert b'Account created!' in rv.data
 
     def test_login_success(self):
         self.testRegister()
-        rv = self.app.post('/user_auth', data=dict(
-            email='test@user.com',
-            pwd='testpassword'
+        rv = self.app.post('/auth', data=dict(
+            lemail='test@user.com',
+            lpwd='Testpassword12!'
         ), follow_redirects=True)
-        assert b'Welcome test user!' in rv.data
+        assert b'Login Successful! Welcome test user' in rv.data
         assert b'Your username or password is incorrect.' not in rv.data
 
     def test_login_failure_wrongPWD(self):
         self.testRegister()
-        rv = self.app.post('/user_auth', data=dict(
-            email='test@user.com',
-            pwd='wrongpassword'
+        rv = self.app.post('/auth', data=dict(
+            lemail='test@user.com',
+            lpwd='wrongpassword'
         ), follow_redirects=True)
-        assert b'Your username or password is incorrect.' in rv.data
-        assert b'Welcome test user!' not in rv.data
+        assert b'Your username or password is incorrect!' in rv.data
+        assert b'Login Successful! Welcome test user' not in rv.data
 
     def test_login_failure_wrongEmail(self):
         self.testRegister()
-        rv = self.app.post('/user_auth', data=dict(
-            email='wrong@user.com',
-            pwd='testpassword'
+        rv = self.app.post('/auth', data=dict(
+            lemail='wrong@user.com',
+            lpwd='testpassword'
         ), follow_redirects=True)
-        assert b'Your username or password is incorrect.' in rv.data
-        assert b'Welcome test user!' not in rv.data
+        assert b'Your username or password is incorrect!' in rv.data
+        assert b'Login Successful! Welcome test user' not in rv.data
 
     def test_logout(self):
         self.test_login_success()
-        rv = self.app.post('/main', follow_redirects=True)
-        assert b'You have been logged out.' in rv.data
+        rv = self.app.get('/', follow_redirects=True)
+        assert b'Login' in rv.data
+        assert b'Email' in rv.data
+        assert b'Password' in rv.data
+        assert b"Don't have an account?" in rv.data
         assert b'Welcome test user!' not in rv.data
 
     def test_add_appointment(self):
@@ -83,21 +94,42 @@ class Tests(TestCase):
 
     def test_delete_appointment(self):
         self.test_add_appointment()
-        rv = self.app.post('/confirm_edit', data=dict(
-            date='2023-10-01',
-            time='10:00 PM',
-            check='1'
+        with app.app.app_context():
+            db = app.get_db()
+            appt = db.execute('SELECT id FROM appointments').fetchone()[0]
+        rv = self.app.post('/edit', data=dict(
+            check='1',
+            appt_num=appt
         ), follow_redirects=True)
-        assert b'Appointment Deleted' in rv.data
+        rv = self.app.post('/confirm_edit', data=dict(
+            confirm='yes',
+            appt=appt
+        ), follow_redirects=True)
+        assert b'Changes confirmed!' in rv.data
 
     def test_edit_appointment(self):
         self.test_add_appointment()
-        rv = self.app.post('/confirm_edit', data=dict(
-            date='2023-10-02',
-            time='11:00 PM',
-            check='0'
+        with app.app.app_context():
+            db = app.get_db()
+            appt = db.execute('SELECT id FROM appointments').fetchone()[0]
+        rv = self.app.post('/edit', data=dict(
+            check='0',
+            appt_num=appt
         ), follow_redirects=True)
-        assert b'Appointment Updated' in rv.data
+        rv = self.app.post('/edit_data', data=dict(
+            appt=appt,
+            oldTime='10:00 PM',
+            oldDate='2023-10-01',
+            time='11:00 PM',
+            date='2023-10-02'
+        ), follow_redirects=True)
+        rv = self.app.post('/confirm_edit', data=dict(
+            confirm='yes',
+            appt=appt,
+            time='11:00 PM',
+            date='2023-10-02'
+        ), follow_redirects=True)
+        assert b'Changes confirmed!' in rv.data
         assert b'2023-10-02' in rv.data
         assert b'11:00 PM' in rv.data
 
@@ -111,3 +143,8 @@ class Tests(TestCase):
         assert b'Appointment Edit Aborted' in rv.data
         assert b'2023-10-01' not in rv.data
         assert b'10:00 PM' not in rv.data
+
+
+if __name__ == '__main__':
+    unittest.main()
+
