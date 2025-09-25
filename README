@@ -1,11 +1,11 @@
-#Apointments
+# Apointments
 
 
-##Overview
+## Overview
 
 - Appointments is a web application for scheduling, viewing, editing, and deleting appointments. Users can create accounts, log in, and manage their appointments through a simple and intuitive interface. The app is built with Flask, SQLite, and Bulma CSS.
 
-##Features
+## Features
 
 - User registration and authentication
 - Secure password hashing
@@ -16,7 +16,7 @@
 - Admin account support
 - Responsive UI with Bulma CSS
 
-##Installation
+## Installation
 
 1. **Clone the repository:**
     ```sh
@@ -53,13 +53,13 @@
     python -m flask run
     ```
 
-##Usage
+## Usage
 
 - Visit `http://localhost:5000` in your browser.
 - Register a new account or log in with the admin credentials.
 - Schedule, view, edit, or delete appointments as needed.
 
-##Project Structure
+## Project Structure
 
 - `app.py` — Main Flask application and routes
 - `schema.sql` — Database schema
