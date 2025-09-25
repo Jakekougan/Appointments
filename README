@@ -1,9 +1,9 @@
-#Appointments
+#Apointments
 
 
 ##Overview
 
-Appointments is a web application for scheduling, viewing, editing, and deleting appointments. Users can create accounts, log in, and manage their appointments through a simple and intuitive interface. The app is built with Flask, SQLite, and Bulma CSS.
+- Appointments is a web application for scheduling, viewing, editing, and deleting appointments. Users can create accounts, log in, and manage their appointments through a simple and intuitive interface. The app is built with Flask, SQLite, and Bulma CSS.
 
 ##Features
 
